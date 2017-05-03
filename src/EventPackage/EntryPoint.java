@@ -4,13 +4,18 @@ public class EntryPoint {
 
 	public static void main(String[] args) throws Exception {
 		
-		System.out.println("Start of Program");
-		//TweetManager.TestTwitter();
+		
+		try {
 		
 		String AccessToken = args[0];		
 		EventManager.getUserEvents(AccessToken, args[1], args[2]);
-		System.out.println(EventManager.userlistevents.size());
+		//System.out.println(EventManager.userlistevents.size());
 		
+		TwitterManager.addTweets();
+		for(EventClass e : EventManager.userlistevents)
+			System.out.println(e.getName() + " : " + e.getTweets().size());
+		
+		//TwitterManager.HashTagGenerator(EventManager.userlistevents)
 		/* For Testing
 		for(EventClass e : EventManager.userlistevents)
 		{
@@ -31,10 +36,13 @@ public class EntryPoint {
 			System.out.println(e.getPlace().getLatitude());
 			System.out.println(e.getPlace().getLongitude());
 			
-			System.out.println(" ");
-		
+			System.out.println(" ");		
 		}
 		*/
+		}
+		catch (Exception ex) {
+			
+		}
 	}
 
 }

@@ -6,7 +6,6 @@ import java.net.URL;
 
 public class Utilities {
 	
-	//Utilities
 	static String readUrl(String urlString) throws Exception {
 	    BufferedReader reader = null;
 	    try {
@@ -24,5 +23,4 @@ public class Utilities {
 	            reader.close();
 	    }
 	}
-
 }

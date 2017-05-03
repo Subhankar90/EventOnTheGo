@@ -1,5 +1,6 @@
 package EventPackage;
 import java.util.Date;
+import java.util.List;
 
 public class EventClass {
 	
@@ -10,7 +11,14 @@ public class EventClass {
 	private EventPlace Place;
 	private Date Starttime;
 	private Date Endtime;
+	private List<String> tweets;
 	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 	public String getId() {
 		return Id;
 	}
@@ -46,12 +54,12 @@ public class EventClass {
 	}
 	public void setEndtime(Date endtime) {
 		Endtime = endtime;
+	}	
+	public List<String> getTweets() {
+		return tweets;
 	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
+	public void setTweets(List<String> tweets) {
+		this.tweets = tweets;
 	}
 	
 	
