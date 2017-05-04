@@ -19,20 +19,29 @@ public class EventManager {
 	
 	public static void getUserEvents(String token, String Latitude,String Longitude) throws Exception {
 		
-		facebookclient = new DefaultFacebookClient(token, Version.LATEST);		
-		Connection<Event> eventlist = facebookclient.fetchConnection("me/events", Event.class);
-		listConversion(eventlist,token,Latitude,Longitude);		
+		facebookclient = new DefaultFacebookClient(token, Version.LATEST);
 		
-		eventlist = facebookclient.fetchConnection("search", Event.class, Parameter.with("q", GeoLocationHandling.getPlace(Latitude,Longitude)), Parameter.with("type", "event"));
-		listConversion(eventlist, token,Latitude,Longitude);
-		
-		List<String> preferencelist = getUserPreferencelist(token);
-		
-		for(int i=0; i<preferencelist.size(); i++) {
-			eventlist = facebookclient.fetchConnection(preferencelist.get(i)+"/events", Event.class);			
-			listConversion(eventlist, token,Latitude,Longitude);	
-		}	
-			
+		try {
+			Connection<Event> eventlist = facebookclient.fetchConnection("me/events", Event.class);
+			listConversion(eventlist,token,Latitude,Longitude);		
+		}
+		catch(Exception ex) {	
+		}		
+		try {
+			Connection<Event> eventlist = facebookclient.fetchConnection("search", Event.class, Parameter.with("q", GeoLocationHandling.getPlace(Latitude,Longitude)), Parameter.with("type", "event"));
+			listConversion(eventlist, token,Latitude,Longitude);
+		}
+		catch(Exception ex) {		
+		}		
+		try {
+			List<String> preferencelist = getUserPreferencelist(token);		
+			for(int i=0; i<preferencelist.size(); i++) {
+				Connection<Event> eventlist = facebookclient.fetchConnection(preferencelist.get(i)+"/events", Event.class);			
+				listConversion(eventlist, token,Latitude,Longitude);	
+			}	
+		}
+		catch(Exception ex) {	
+		}			
 	}
 	
 	public static List<String> getUserPreferencelist(String token) throws Exception {
@@ -42,11 +51,24 @@ public class EventManager {
 	    Gson gson = new Gson();        
 	    Likes preference = gson.fromJson(Utilities.readUrl(list.getNextPageUrl()), Likes.class);
 	    for(int i = 0; i<preference.getData().size();i++)  {
-	    	preferencelist.add(preference.getData().get(i).getId()); 	
-	    	
+	    	preferencelist.add(preference.getData().get(i).getId()); 		    	
 	    }
-	    return preferencelist;
-	    
+	    return preferencelist;	    
+	}
+	
+	public static void HotnessCalculator() {
+		for(EventClass event : userlistevents) {
+			Event eventObj = facebookclient.fetchObject(event.getId(), Event.class, Parameter.with("fields", "attending_count,declined_count,interested_count,maybe_count,noreply_count,name"));
+			double facebookRater = eventObj.getAttendingCount() + eventObj.getInterestedCount() * 0.75 
+					+ eventObj.getMaybeCount() * 0.5 - eventObj.getDeclinedCount() - eventObj.getNoreplyCount() * 0.5;	
+			double twitterRater = event.getTweets().size();			
+			if(facebookRater > 1000 && twitterRater == 100)
+				event.setHotness("Super Hot");
+			else if(facebookRater > 200 && twitterRater == 100)
+				event.setHotness("Super Hot");
+			else
+				event.setHotness("Mild");
+		}
 	}
 	
 	public static void listConversion(Connection<Event> eventlist, String token, String baselatitude, String baselongitude) {
@@ -69,8 +91,7 @@ public class EventManager {
 						if(Utilities.distanceCalculator(eventlist.getData().get(i).getPlace().getLocation().getLatitude(),
 								eventlist.getData().get(i).getPlace().getLocation().getLongitude(), 
 								Double.parseDouble(baselatitude), Double.parseDouble(baselongitude)) > 100)
-							return;
-						
+							return;						
 						placeObj.setStreet(eventlist.getData().get(i).getPlace().getLocation().getStreet());
 						placeObj.setCity(eventlist.getData().get(i).getPlace().getLocation().getCity());
 						placeObj.setState(eventlist.getData().get(i).getPlace().getLocation().getState());
@@ -87,8 +108,6 @@ public class EventManager {
 					return;
 				userlistevents.add(eventObj);
 			}
-		}
-		
-	}
-
+		}		
+	}	
 }

@@ -12,6 +12,7 @@ public class EventClass {
 	private Date Starttime;
 	private Date Endtime;
 	private List<String> tweets;
+	private String Hotness;
 	
 	public String getToken() {
 		return token;
@@ -61,8 +62,10 @@ public class EventClass {
 	public void setTweets(List<String> tweets) {
 		this.tweets = tweets;
 	}
-	
-	
-	
-
+	public String getHotness() {
+		return Hotness;
+	}
+	public void setHotness(String hotness) {
+		Hotness = hotness;
+	}
 }

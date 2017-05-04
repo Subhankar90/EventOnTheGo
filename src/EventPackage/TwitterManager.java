@@ -22,9 +22,8 @@ public class TwitterManager {
 		Query query = null;
 		for(EventClass event : EventManager.userlistevents) {
 			query = new Query(HashTagGenerator(event.getName()));
-			query.setCount(50);	       
+			query.setCount(100);	       
 	        result = twitter.search(query);
-	        //System.out.println(result.getCount());
 	        List<Status> tweets = result.getTweets();
 	        List<String> tweetlist = new ArrayList<String>(); 
 	        for (Status tweet : tweets)
@@ -49,7 +48,6 @@ public class TwitterManager {
 			else
 				HashTag = "#" + EventName.replace(" ", "");
 		HashTag = HashTag.replace(":", "").replace("-", "").replace(".", "");
-		return HashTag;
-			
+		return HashTag;			
 		}
 	}

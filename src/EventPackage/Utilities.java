@@ -35,9 +35,7 @@ public class Utilities {
 				+ Math.cos(degeeToradian(eventLatitude)) 
 				* Math.cos(degeeToradian(baseLatitude)) 
 				* Math.cos(degeeToradian(theta));
-		distance =  Math.acos(distance);
-		distance = distance * 60 * 1.1515;
-		return distance;
+		return  Math.acos(distance) * 60 * 1.1515;
 	}
 	
 	public static double degeeToradian(double degree) {

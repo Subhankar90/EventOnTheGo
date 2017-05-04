@@ -24,14 +24,12 @@ public class GeoLocationHandling {
 			if (nodelist.getLength() > 0 && nodelist != null){
 				address=((Element)nodelist.item(0)).getElementsByTagName("formatted_address").item(0).getTextContent();
 			}
+			address = address.substring(address.indexOf(",") + 2);
+			address = address.substring(0, address.indexOf(","));		
+			return address;
 		} 
 		catch (Exception ex) {
-			address = "None";
-		}
-		
-		address = address.substring(address.indexOf(",") + 2);
-		address = address.substring(0, address.indexOf(","));		
-		return address;
+			return "None";
+		}		
 	}
-
 }
