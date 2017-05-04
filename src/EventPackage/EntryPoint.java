@@ -9,14 +9,17 @@ public class EntryPoint {
 		
 		String AccessToken = args[0];		
 		EventManager.getUserEvents(AccessToken, args[1], args[2]);
-		//System.out.println(EventManager.userlistevents.size());
-		
+		System.out.println(EventManager.userlistevents.size());
+
 		TwitterManager.addTweets();
-		for(EventClass e : EventManager.userlistevents)
-			System.out.println(e.getName() + " : " + e.getTweets().size());
-		
-		//TwitterManager.HashTagGenerator(EventManager.userlistevents)
-		/* For Testing
+		testResults();
+		}
+		catch (Exception ex) {
+			System.out.println(ex.toString());
+		}
+	}
+	
+	private static void testResults() {
 		for(EventClass e : EventManager.userlistevents)
 		{
 			System.out.println(e.getToken());
@@ -36,12 +39,9 @@ public class EntryPoint {
 			System.out.println(e.getPlace().getLatitude());
 			System.out.println(e.getPlace().getLongitude());
 			
-			System.out.println(" ");		
-		}
-		*/
-		}
-		catch (Exception ex) {
+			System.out.println("Tweet Size : " + e.getTweets().size());
 			
+			System.out.println(" ");		
 		}
 	}
 
