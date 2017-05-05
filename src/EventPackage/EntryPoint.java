@@ -11,7 +11,7 @@ public class EntryPoint {
 		EventManager.getUserEvents(AccessToken, args[1], args[2]);		
 		TwitterManager.addTweets();
 		EventManager.HotnessCalculator();
-		//System.out.println(EventManager.userlistevents.size());
+		System.out.println(EventManager.userlistevents.size());
 		//testResults();
 		}
 		catch (Exception ex) {

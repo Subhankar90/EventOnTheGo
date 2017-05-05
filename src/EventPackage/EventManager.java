@@ -28,10 +28,16 @@ public class EventManager {
 		catch(Exception ex) {	
 		}		
 		try {
-			Connection<Event> eventlist = facebookclient.fetchConnection("search", Event.class, Parameter.with("q", GeoLocationHandling.getPlace(Latitude,Longitude)), Parameter.with("type", "event"));
+			Connection<Event> eventlist = facebookclient.fetchConnection("search", Event.class, Parameter.with("q", GeoLocationHandling.getPlace(Latitude,Longitude)), 
+					Parameter.with("type", "event"));
+			listConversion(eventlist, token,Latitude,Longitude);
+			String pageurl = eventlist.getNextPageUrl();
+			while (pageurl != null) {				
+				pageurl = getMoreSearchEvents(token,Latitude,Longitude,pageurl);
+			}				
 			listConversion(eventlist, token,Latitude,Longitude);
 		}
-		catch(Exception ex) {		
+		catch(Exception ex) {	
 		}		
 		try {
 			List<String> preferencelist = getUserPreferencelist(token);		
@@ -44,14 +50,31 @@ public class EventManager {
 		}			
 	}
 	
+	
+	public static String getMoreSearchEvents(String token, String Latitude, String Longitude, String pageUrl) {
+		try {
+			String nextPage = pageUrl.substring(pageUrl.indexOf("after=") + 6);
+			Connection<Event> eventlist = facebookclient.fetchConnection("search", Event.class, Parameter.with("q", GeoLocationHandling.getPlace(Latitude,Longitude)), 
+				Parameter.with("type", "event"), Parameter.with("limit", "25"), 
+				Parameter.with("after", nextPage));
+		listConversion(eventlist, token,Latitude,Longitude);
+		return eventlist.getNextPageUrl();
+		}
+		catch(Exception ex) {
+			
+		}
+		return null;
+		
+	}
+	
 	public static List<String> getUserPreferencelist(String token) throws Exception {
 		List<String> preferencelist = new ArrayList<String>();
 		facebookclient = new DefaultFacebookClient(token, Version.LATEST);	
 		Connection<Likes> list = facebookclient.fetchConnection("me/likes", Likes.class, Parameter.with("limit","50"));
-	    Gson gson = new Gson();        
+		Gson gson = new Gson();        
 	    Likes preference = gson.fromJson(Utilities.readUrl(list.getNextPageUrl()), Likes.class);
 	    for(int i = 0; i<preference.getData().size();i++)  {
-	    	preferencelist.add(preference.getData().get(i).getId()); 		    	
+	    	preferencelist.add(preference.getData().get(i).getId()); 	
 	    }
 	    return preferencelist;	    
 	}
@@ -65,7 +88,7 @@ public class EventManager {
 			if(facebookRater > 1000 && twitterRater == 100)
 				event.setHotness("Super Hot");
 			else if(facebookRater > 200 && twitterRater == 100)
-				event.setHotness("Super Hot");
+				event.setHotness("Hot");
 			else
 				event.setHotness("Mild");
 		}
@@ -76,6 +99,8 @@ public class EventManager {
 		for(int i = 0; i<eventlist.getData().size();i++) {
 			if(eventlist.getData().get(i).getStartTime().after(currentDate)) {
 				EventClass eventObj = new EventClass();
+				if(eventlist.getData().get(i).getName().contains("Cloud computing"))
+					System.out.println("Hello");
 				eventObj.setToken(token);
 				eventObj.setId(eventlist.getData().get(i).getId());
 				eventObj.setName(eventlist.getData().get(i).getName());
